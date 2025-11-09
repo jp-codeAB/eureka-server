@@ -1,5 +1,5 @@
 # Stage 1: Build the application JAR
-FROM gradle:8.5.0-jdk21-alpine AS builder
+FROM openjdk:21-jdk-slim-bullseye  # CAMBIAR ESTA LÍNEA
 WORKDIR /app
 COPY build.gradle settings.gradle ./
 # Copia solo los archivos que son estrictamente necesarios para la imagen final
