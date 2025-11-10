@@ -1,25 +1,20 @@
-# Stage 1: Build the application JAR
-FROM openjdk:21-jdk-slim-bullseye  # CAMBIAR ESTA LÍNEA
+FROM gradle:8.10.2-jdk21 AS builder
 WORKDIR /app
+
 COPY build.gradle settings.gradle ./
-# Copia solo los archivos que son estrictamente necesarios para la imagen final
+COPY gradle gradle
 COPY src src
 
-# Asume que el JAR se genera en build/libs
-RUN gradle clean build -x test
+RUN gradle clean build -x test --no-daemon
 
-# Stage 2: Create the final image
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
-# Nombre del archivo JAR generado por Gradle (ajusta si es diferente)
-ARG JAR_FILE=/app/build/libs/eureka-server-0.0.1-SNAPSHOT.jar
+COPY --from=builder /app/build/libs/*.jar app.jar
 
-# Copia el JAR del stage de construcción
-COPY --from=builder ${JAR_FILE} app.jar
-
-# Puerto por defecto de Eureka
 EXPOSE 8761
 
-# Comando para ejecutar la aplicación
+ENV SPRING_PROFILES_ACTIVE=dev
+ENV EUREKA_SERVER_PORT=8761
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
