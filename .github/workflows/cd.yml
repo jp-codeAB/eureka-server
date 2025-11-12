@@ -1,8 +1,10 @@
-name: CD - eureka-server
+name: CD-eureka-server
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_run:
+    workflows: ["CI-eureka-server"]
+    types:
+      - completed
 
 jobs:
   docker:

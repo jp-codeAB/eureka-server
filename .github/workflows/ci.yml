@@ -1,4 +1,4 @@
-name: CI Eureka Server
+name: CI-eureka-server
 
 on:
   push:
